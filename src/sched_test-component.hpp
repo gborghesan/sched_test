@@ -20,6 +20,10 @@ class Sched_test : public RTT::TaskContext{
     int N;
     int i;
     bool source;
+    bool use_event_port;
+
+    bool first_run;
+
     RTT::InputPort<std::vector<double> > inport;
     RTT::OutputPort<std::vector<double> > outport;
     int counter;

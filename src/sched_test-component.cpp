@@ -5,9 +5,10 @@
 Sched_test::Sched_test(std::string const& name) : TaskContext(name, PreOperational)
 {
 	counter=0;
-	addPort("inport",inport);
+	//addPort("inport",inport);
 	addPort("outport",outport);
 	addProperty("v_size",N);
+        addProperty("use_event_port",use_event_port);
 	addProperty("index_of_component",i);
 	addProperty("source",source);
 	this->addOperation( "step_own",  &Sched_test::step, this, RTT::OwnThread)
@@ -18,6 +19,7 @@ Sched_test::Sched_test(std::string const& name) : TaskContext(name, PreOperation
 	                                   .doc("empty operation that a side effect calls the updatehook");
 
 	source=false;
+first_run=true;
 }
 bool Sched_test::empty(){
 	return true;
@@ -25,6 +27,10 @@ bool Sched_test::empty(){
 
  
 bool Sched_test::configureHook(){
+	if(!use_event_port)
+        	addPort("inport",inport);
+	else
+		addEventPort("inport",inport);
 	counter=0;
 	v_in.resize(N,-1);
 	outport.write(v_in);
@@ -35,6 +41,8 @@ bool Sched_test::startHook(){
 	return true;
 }
 void Sched_test::updateHook(){
+
+	if (first_run){first_run=false; return;}
 	//RTT::Logger::In in(this->getName());
 	//RTT::log(RTT::Error)<<this->getName()<<": UPDATE"<<RTT::endlog();
 

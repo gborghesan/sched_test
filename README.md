@@ -3,7 +3,7 @@
 This package contains a c++ component, that has an input and output port, and lua-based supervisor.
 
 The goal is to verify if it is possible to run from a supervisor, that takes care of syncronization, either the update hook or a 
-an operation in own or cliend thread. the 3 test are selected in lines 65-67 of start.lua
+an operation in own or cliend thread. the 3 test are selected in lines 29-31 of start.lua
 ```
 --local mod=1-- call updateHook (in node_i)
 --local mod=2-- call step_own (in node_i)
@@ -35,4 +35,6 @@ This suggest that an empty operation is a way to call the the update hook in a b
 
 This modality has been added as mod=4.
 
+lastly: use of event_port: it works as expected.
+BUT, since the configureHook triggers automatically the updateHook, (over-riding the fact the update hook should be only data driven), I have to put a boolean to ensure that the first time the update is called, no code is executed. otherwise we have a constant offset in the data vector.
 
