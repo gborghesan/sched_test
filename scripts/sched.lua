@@ -36,7 +36,7 @@ function updateHook()
   do
     p=tc:getPeer(nm)
     if flag==1 then
-    p:trigger()
+      p:trigger()
       --p:activate()
     elseif flag==2 then
       op = p:getOperation("step_own")
@@ -47,6 +47,8 @@ function updateHook()
     elseif flag==4 then  
       op = p:getOperation("empty_op")
       op();
+    elseif flag==6 then
+      p:update()
     end
   end
 

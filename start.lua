@@ -26,12 +26,13 @@ supervisor:exec_file((path.."/scripts/sched.lua"))
 
 --[[ choose one of the 5 value for mod]]--
 
-local mod=1-- call updateHook (in node_i)
+local mod=1-- call trigger() (in node_i)
 --local mod=2-- call step_own (in node_i)
 --local mod=3-- call step_client (in supervisor)
 
 --local mod=4-- call empty_function
 --local mod=5-- use event ports
+--local mod=6-- use master-slave activities and call update() for each node_i
 
 --deploy N_of_comp nodes
 vect={}
@@ -44,6 +45,9 @@ for i=1,N_of_comp do
   local comp_name="node" .. i
   depl:loadComponent(comp_name, "Sched_test")
   vect[i] = depl:getPeer(comp_name)
+  if mod==6 then
+    depl:setMasterSlaveActivity("supervisor", comp_name)
+  end
   vect[i]:getProperty("v_size"):set(N_of_comp)
   vect[i]:getProperty("index_of_component"):set(i-1)
   name_vector[i]=comp_name
