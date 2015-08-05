@@ -26,13 +26,13 @@ supervisor:exec_file((path.."/scripts/sched.lua"))
 
 --[[ choose one of the 5 value for mod]]--
 
-local mod=1-- call trigger() (in node_i)
+--local mod=1-- call trigger() (in node_i)
 --local mod=2-- call step_own (in node_i)
 --local mod=3-- call step_client (in supervisor)
 
 --local mod=4-- call empty_function
 --local mod=5-- use event ports
---local mod=6-- use master-slave activities and call update() for each node_i
+local mod=6-- use master-slave activities and call update() for each node_i
 
 --deploy N_of_comp nodes
 vect={}
@@ -89,6 +89,7 @@ for i=1,N_of_comp do
 
  if mod==4 then vect[i]:start(); end
  if mod==5 then vect[i]:start(); end
+ if mod==6 then vect[i]:start(); end
 
 end
 
