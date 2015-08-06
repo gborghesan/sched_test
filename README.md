@@ -38,3 +38,41 @@ This modality has been added as mod=4.
 lastly: use of event_port: it works as expected.
 BUT, since the configureHook triggers automatically the updateHook, (over-riding the fact the update hook should be only data driven), I have to put a boolean to ensure that the first time the update is called, no code is executed. otherwise we have a constant offset in the data vector.
 
+## comment 1 (modality 5) ##
+Added, under suggestion of Ruben, data triggered ports (modality 5)
+in this case the supervisor does not play any role, and the node1 is the periodic elements periodic.
+
+The only problem that we have here is that the nodes have to be started, thus calling the updatehook once, 
+this can cause a race conditions since the starthook+updatehook are non blocking.
+
+In this example, i simply put a boolean flag _first_run_ that makes the node to skip the first execution of the update.
+
+## comment 2 (modality 6) and conclusions ##
+After applying nick's patch, we probably have the solution!
+the best way to execute components in chain is to use the slave/master activity. In deployment:
+
+```
+...
+depl:setMasterSlaveActivity("supervisor", comp_name)
+...
+```
+where `comp_name` is the name of node,
+and in the update hook of the supervisor, we call sequentially the node's update:
+```
+function updateHook()
+	s=tc:getProperty("names_nodes"):get()
+	n=s:totab();
+
+	for   inm,nm   in ipairs(n) do
+    	p=tc:getPeer(nm)
+    	p:update()
+	end
+end
+
+```
+
+Again, nodes have to been started, so there is a the problem of racing conditions of start 
+(that is blocking and hopefully returns only after having data written into ports and available to other components) 
+that calls the update hook (non-blocking), but in many practical cases this problem is not so relevant...
+
+
